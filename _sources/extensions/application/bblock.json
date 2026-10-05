@@ -1,0 +1,21 @@
+{
+  "$schema": "https://raw.githubusercontent.com/opengeospatial/bblocks-postprocess/master/ogc/bblocks/metadata-schema.yaml",
+  "name": "STAC Application Extension",
+  "abstract": "STAC Application Extension for describing software applications in Items, Collections and Catalogs.",
+  "status": "under-development",
+  "dateTimeAddition": "2026-10-03T00:00:00Z",
+  "dateOfLastChange": "2026-10-03",
+  "version": "0.1.0",
+  "itemClass": "schema",
+  "register": "ogc-building-block-register",
+  "scope": "contrib",
+  "tags": ["stac", "stac-extension", "application"],
+  "sourceSchema": "schema.yaml",
+  "ldContext": "context.jsonld",
+  "sources": [
+    {
+      "title": "STAC Application Extension",
+      "link": "https://github.com/stac-extensions/application/tree/v0.1.0"
+    }
+  ]
+}

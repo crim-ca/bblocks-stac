@@ -1,0 +1,21 @@
+{
+  "$schema": "https://raw.githubusercontent.com/opengeospatial/bblocks-postprocess/master/ogc/bblocks/metadata-schema.yaml",
+  "name": "STAC Datacube Extension",
+  "abstract": "STAC Datacube Extension for Items, Collections and Assets.",
+  "status": "under-development",
+  "dateTimeAddition": "2026-10-03T00:00:00Z",
+  "dateOfLastChange": "2026-10-03",
+  "version": "2.3.0",
+  "itemClass": "schema",
+  "register": "ogc-building-block-register",
+  "scope": "contrib",
+  "tags": ["stac", "stac-extension", "datacube"],
+  "sourceSchema": "schema.yaml",
+  "ldContext": "context.jsonld",
+  "sources": [
+    {
+      "title": "STAC Datacube Extension",
+      "link": "https://github.com/stac-extensions/datacube/tree/v2.3.0"
+    }
+  ]
+}

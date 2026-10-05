@@ -1,0 +1,21 @@
+{
+  "$schema": "https://raw.githubusercontent.com/opengeospatial/bblocks-postprocess/master/ogc/bblocks/metadata-schema.yaml",
+  "name": "STAC ML-AOI Extension",
+  "abstract": "STAC ML-AOI Extension for machine-learning training, validation and test areas of interest.",
+  "status": "under-development",
+  "dateTimeAddition": "2026-10-03T00:00:00Z",
+  "dateOfLastChange": "2026-10-03",
+  "version": "0.2.0",
+  "itemClass": "schema",
+  "register": "ogc-building-block-register",
+  "scope": "contrib",
+  "tags": ["stac", "stac-extension", "ml-aoi"],
+  "sourceSchema": "schema.yaml",
+  "ldContext": "context.jsonld",
+  "sources": [
+    {
+      "title": "STAC ML-AOI Extension",
+      "link": "https://github.com/stac-extensions/ml-aoi/tree/v0.2.0"
+    }
+  ]
+}
