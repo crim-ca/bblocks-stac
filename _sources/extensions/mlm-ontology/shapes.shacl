@@ -1,5 +1,7 @@
 @prefix sh:    <http://www.w3.org/ns/shacl#> .
 @prefix mlm:   <https://w3id.org/ogc/stac/mlm/> .
+@prefix cube:  <https://w3id.org/ogc/stac/datacube/> .
+@prefix stac:  <https://w3id.org/ogc/stac/core/> .
 @prefix skos:  <http://www.w3.org/2004/02/skos/core#> .
 @prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
 @prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
@@ -17,68 +19,144 @@ mlm:ModelRootShape a sh:NodeShape ;
     sh:targetSubjectsOf mlm:architecture ;
     sh:property [ sh:path mlm:name ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
     sh:property [ sh:path mlm:architecture ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
-    sh:property [ sh:path mlm:tasks ; sh:minCount 1 ; sh:class skos:Concept ] ;
-    sh:property [ sh:path mlm:input ; sh:minCount 1 ; sh:node mlm:ModelInputShape ] ;
-    sh:property [ sh:path mlm:output ; sh:minCount 1 ; sh:node mlm:ModelOutputShape ] .
+    sh:property [
+        sh:path (mlm:tasks [ sh:zeroOrMorePath rdf:rest ] rdf:first) ;
+        sh:minCount 1 ; sh:class skos:Concept
+    ] ;
+    sh:property [
+        sh:path (mlm:input [ sh:zeroOrMorePath rdf:rest ] rdf:first) ;
+        sh:minCount 1 ; sh:node mlm:ModelInputShape
+    ] ;
+    sh:property [
+        sh:path (mlm:output [ sh:zeroOrMorePath rdf:rest ] rdf:first) ;
+        sh:minCount 1 ; sh:node mlm:ModelOutputShape
+    ] .
 
 mlm:AcceleratorShape a sh:NodeShape ;
     rdfs:label "mlm:accelerator shape" ;
     sh:targetSubjectsOf mlm:accelerator ;
     sh:property [
-        sh:path mlm:accelerator ; sh:maxCount 1 ; sh:class skos:Concept ;
-        sh:in ( mlm:amd64 mlm:cuda mlm:xla mlm:amd-rocm mlm:intel-ipex-cpu mlm:intel-ipex-gpu mlm:macos-arm ) ;
+        sh:path mlm:accelerator ; sh:maxCount 1 ;
+        sh:in ( mlm:amd64 mlm:cuda mlm:xla mlm:amd-rocm mlm:intel-ipex-cpu mlm:intel-ipex-gpu mlm:macos-arm
+                "null"^^rdf:JSON ) ;
     ] .
 
 mlm:ModelInputShape a sh:NodeShape ;
     rdfs:label "mlm:ModelInput shape" ;
-    sh:targetClass mlm:ModelInput ;
+    sh:targetSubjectsOf mlm:input_structure ;
     sh:property [ sh:path mlm:io_name ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; sh:minLength 1 ] ;
     sh:property [ sh:path mlm:input_structure ; sh:minCount 1 ; sh:maxCount 1 ; sh:node mlm:InputStructureShape ] ;
     sh:property [
-        sh:path mlm:resize_type ; sh:maxCount 1 ; sh:class skos:Concept ;
+        sh:path mlm:resize_type ; sh:maxCount 1 ;
         sh:in ( mlm:crop mlm:pad mlm:interpolation-nearest mlm:interpolation-linear mlm:interpolation-cubic
                 mlm:interpolation-area mlm:interpolation-lanczos4 mlm:interpolation-max
-                mlm:wrap-fill-outliers mlm:wrap-inverse-map ) ;
+                mlm:wrap-fill-outliers mlm:wrap-inverse-map "null"^^rdf:JSON ) ;
     ] .
 
 mlm:ModelOutputShape a sh:NodeShape ;
     rdfs:label "mlm:ModelOutput shape" ;
-    sh:targetClass mlm:ModelOutput ;
+    sh:targetSubjectsOf mlm:result ;
     sh:property [ sh:path mlm:io_name ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; sh:minLength 1 ] ;
     sh:property [ sh:path mlm:result ; sh:minCount 1 ; sh:maxCount 1 ; sh:node mlm:ResultStructureShape ] .
 
+mlm:BandVariableReferenceShape a sh:NodeShape ;
+    rdfs:label "MLM band or variable reference shape" ;
+    sh:targetSubjectsOf mlm:reference_name ;
+    sh:property [ sh:path mlm:reference_name ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ;
+                 sh:minLength 1 ] ;
+    sh:property [ sh:path mlm:reference_format ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+    sh:property [ sh:path mlm:reference_expression ; sh:maxCount 1 ] .
+
 mlm:InputStructureShape a sh:NodeShape ;
     rdfs:label "mlm:InputStructure shape" ;
-    sh:targetClass mlm:InputStructure ;
+    sh:targetSubjectsOf mlm:shape ;
     sh:property [ sh:path mlm:shape ; sh:minCount 1 ] ;
     sh:property [
-        sh:path (mlm:shape [ sh:zeroOrMorePath (rdf:rest) ] rdf:first) ;
-        sh:datatype xsd:integer ;
+        sh:path (mlm:shape [ sh:zeroOrMorePath rdf:rest ] rdf:first) ;
+        sh:or ( [ sh:datatype xsd:integer ] [ sh:datatype xsd:double ] ) ;
     ] ;
     sh:property [ sh:path mlm:dim_order ; sh:minCount 1 ] ;
     sh:property [
-        sh:path (mlm:dim_order [ sh:zeroOrMorePath (rdf:rest) ] rdf:first) ;
+        sh:path (mlm:dim_order [ sh:zeroOrMorePath rdf:rest ] rdf:first) ;
         sh:datatype xsd:string ;
     ] .
 
 mlm:ResultStructureShape a sh:NodeShape ;
     rdfs:label "mlm:ResultStructure shape" ;
-    sh:targetClass mlm:ResultStructure ;
+    sh:targetSubjectsOf mlm:shape ;
     sh:property [ sh:path mlm:shape ; sh:minCount 1 ] ;
     sh:property [
-        sh:path (mlm:shape [ sh:zeroOrMorePath (rdf:rest) ] rdf:first) ;
-        sh:datatype xsd:integer ;
+        sh:path (mlm:shape [ sh:zeroOrMorePath rdf:rest ] rdf:first) ;
+        sh:or ( [ sh:datatype xsd:integer ] [ sh:datatype xsd:double ] ) ;
     ] ;
     sh:property [ sh:path mlm:dim_order ; sh:minCount 1 ] ;
     sh:property [
-        sh:path (mlm:dim_order [ sh:zeroOrMorePath (rdf:rest) ] rdf:first) ;
+        sh:path (mlm:dim_order [ sh:zeroOrMorePath rdf:rest ] rdf:first) ;
         sh:datatype xsd:string ;
     ] .
 
 mlm:ValueScalingShape a sh:NodeShape ;
     rdfs:label "mlm:ValueScaling shape" ;
-    sh:targetClass mlm:ValueScaling ;
+    sh:targetSubjectsOf mlm:scaling_type ;
     sh:property [
         sh:path mlm:scaling_type ; sh:minCount 1 ; sh:maxCount 1 ; sh:class skos:Concept ;
         sh:in ( mlm:min-max mlm:z-score mlm:clip mlm:clip-min mlm:clip-max mlm:offset mlm:scale mlm:processing ) ;
+    ] .
+
+mlm:VariableReferenceResolutionShape a sh:NodeShape ;
+    rdfs:label "MLM variable reference resolution shape" ;
+    sh:targetSubjectsOf mlm:variables ;
+    sh:sparql [
+        sh:message "Every MLM variable reference must resolve to a key in the enclosing Datacube cube:variables map." ;
+        sh:select """
+            SELECT $this ?reference
+            WHERE {
+                $this mlm:variables/rdf:rest*/rdf:first ?reference .
+                OPTIONAL { ?reference mlm:reference_name ?referenceName }
+                BIND (IF(isLiteral(?reference), STR(?reference), ?referenceName) AS ?name)
+                FILTER NOT EXISTS {
+                    ?model ?inputOutput ?inputsOutputs .
+                    FILTER (?inputOutput IN (mlm:input, mlm:output))
+                    ?inputsOutputs rdf:rest*/rdf:first $this .
+                    ?model cube:variables ?variable .
+                    ?variable mlm:datacube_variable_name ?name
+                }
+            }
+        """
+    ] .
+
+mlm:VariableDimensionResolutionShape a sh:NodeShape ;
+    rdfs:label "Datacube variable dimension resolution shape" ;
+    sh:targetSubjectsOf cube:variables ;
+    sh:sparql [
+        sh:message "Every dimension named by a Datacube variable must resolve to a key in cube:dimensions on the same resource." ;
+        sh:select """
+            SELECT $this ?dimension
+            WHERE {
+                $this cube:variables ?variable .
+                ?variable cube:dimensions/(rdf:rest*/rdf:first)? ?dimension .
+                FILTER (isLiteral(?dimension))
+                FILTER NOT EXISTS {
+                    $this cube:dimensions ?dimensionDefinition .
+                    ?dimensionDefinition mlm:datacube_dimension_name ?dimension
+                }
+            }
+        """
+    ] .
+
+
+mlm:ModelAssetShape a sh:NodeShape ;
+    rdfs:label "MLM model asset shape" ;
+    sh:targetSubjectsOf mlm:artifact_type ;
+    sh:sparql [
+        sh:message "An asset with mlm:artifact_type must also carry the mlm:model role." ;
+        sh:select """
+            SELECT $this
+            WHERE {
+                FILTER NOT EXISTS {
+                    $this stac:hasAssetroles/(rdf:rest*/rdf:first)? ?role .
+                    FILTER (STR(?role) = "mlm:model")
+                }
+            }
+        """
     ] .
